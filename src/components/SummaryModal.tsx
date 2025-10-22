@@ -1,9 +1,10 @@
-import React from 'react';
-import { X, Download, AlertTriangle, CheckCircle, Info, AlertCircle } from 'lucide-react';
+import React, { useState } from 'react';
+import { X, Download, AlertTriangle, CheckCircle, Info, AlertCircle, FileText, Globe, Database, FileSpreadsheet } from 'lucide-react';
 import { useAssessment } from '@/context/AssessmentContext';
 
 const SummaryModal: React.FC = () => {
   const { state, dispatch, calculateSecurityScore, calculateStats, getHighRiskItems, getIncompleteItems, analyzeNAItems, exportAssessment } = useAssessment();
+  const [showExportOptions, setShowExportOptions] = useState(false);
 
   if (!state.isModalOpen) return null;
 
@@ -63,6 +64,10 @@ const SummaryModal: React.FC = () => {
     if (e.target === e.currentTarget) {
       handleClose();
     }
+  };
+
+  const handleExportClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
   };
 
   return (
@@ -256,14 +261,65 @@ const SummaryModal: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-gray-50 px-6 py-4 flex justify-end space-x-3">
-          <button
-            onClick={exportAssessment}
-            className="btn btn-primary"
-          >
-            <Download className="h-4 w-4 mr-2" />
-            Export Summary
-          </button>
+        <div className="bg-gray-50 px-6 py-4 flex justify-between items-center">
+          <div className="flex space-x-2 relative">
+            <button
+              onClick={() => setShowExportOptions(!showExportOptions)}
+              className="btn btn-primary"
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Export Report
+            </button>
+            {showExportOptions && (
+              <div 
+                className="absolute bottom-16 left-0 bg-white border border-gray-200 rounded-lg shadow-lg p-2 z-10"
+                onClick={handleExportClick}
+              >
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => {
+                      exportAssessment('pdf');
+                      setShowExportOptions(false);
+                    }}
+                    className="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
+                  >
+                    <FileText className="h-4 w-4 mr-2" />
+                    PDF Report
+                  </button>
+                  <button
+                    onClick={() => {
+                      exportAssessment('html');
+                      setShowExportOptions(false);
+                    }}
+                    className="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
+                  >
+                    <Globe className="h-4 w-4 mr-2" />
+                    HTML Report
+                  </button>
+                  <button
+                    onClick={() => {
+                      exportAssessment('json');
+                      setShowExportOptions(false);
+                    }}
+                    className="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
+                  >
+                    <Database className="h-4 w-4 mr-2" />
+                    JSON Data
+                  </button>
+                  <button
+                    onClick={() => {
+                      exportAssessment('csv');
+                      setShowExportOptions(false);
+                    }}
+                    className="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
+                  >
+                    <FileSpreadsheet className="h-4 w-4 mr-2" />
+                    CSV Data
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
           <button
             onClick={handleClose}
             className="btn btn-secondary"

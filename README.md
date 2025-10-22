@@ -128,9 +128,18 @@ Open [http://localhost:5173](http://localhost:5173) to view it in the browser.
    - Finish all sections to generate comprehensive results
    - Review the summary modal for key findings
 
-2. **Export Data**
-   - Click "Export" to download JSON file
-   - File includes all assessment data, scores, and metadata
+2. **Export Options**
+   - **PDF Report**: Professional formatted report with executive summary, scores, and recommendations
+   - **HTML Report**: Styled web report that can be viewed in browsers or shared with clients
+   - **JSON Data**: Enhanced structured data export with metadata and analysis
+   - **CSV Data**: Spreadsheet format for data analysis and reporting
+
+3. **Export Features**
+   - Multiple format options for different use cases
+   - Professional formatting for client presentations
+   - Comprehensive data analysis and recommendations
+   - Executive summary with risk assessment
+   - Section-by-section scoring breakdown
 
 ## Project Structure
 

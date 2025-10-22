@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { AssessmentData, SecurityScore, AssessmentStats, HighRiskItem, NAnalysis } from '@/types';
 import { sections } from '@/data/sections';
+import { AssessmentExporter } from '@/utils/exportUtils';
 
 interface AssessmentState {
   currentSection: number;
@@ -75,7 +76,7 @@ interface AssessmentContextType {
   analyzeNAItems: () => NAnalysis;
   saveData: () => void;
   loadData: () => void;
-  exportAssessment: () => void;
+  exportAssessment: (format?: 'json' | 'pdf' | 'html' | 'csv') => void;
   resetAssessment: () => void;
 }
 
@@ -295,24 +296,39 @@ export function AssessmentProvider({ children }: { children: React.ReactNode }) 
     };
   };
 
-  const exportAssessment = () => {
-    const exportData = {
-      ...state.assessmentData,
-      exportDate: new Date().toISOString(),
-      version: '1.0'
-    };
+  const exportAssessment = (format: 'json' | 'pdf' | 'html' | 'csv' = 'json') => {
+    const score = calculateSecurityScore();
+    const stats = calculateStats();
+    const highRiskItems = getHighRiskItems();
+    const incompleteItems = getIncompleteItems();
+    const naAnalysis = analyzeNAItems();
 
-    const dataStr = JSON.stringify(exportData, null, 2);
-    const dataBlob = new Blob([dataStr], { type: 'application/json' });
-    const url = URL.createObjectURL(dataBlob);
-    
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `cybersecurity-assessment-${state.assessmentData.clientName || 'client'}-${new Date().toISOString().split('T')[0]}.json`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    const exporter = new AssessmentExporter({
+      assessmentData: state.assessmentData,
+      score,
+      stats,
+      highRiskItems,
+      incompleteItems,
+      naAnalysis,
+      sections
+    });
+
+    switch (format) {
+      case 'json':
+        exporter.exportJSON();
+        break;
+      case 'pdf':
+        exporter.exportPDF();
+        break;
+      case 'html':
+        exporter.exportHTML();
+        break;
+      case 'csv':
+        exporter.exportCSV();
+        break;
+      default:
+        exporter.exportJSON();
+    }
   };
 
   const resetAssessment = () => {
