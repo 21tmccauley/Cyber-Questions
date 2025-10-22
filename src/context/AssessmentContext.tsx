@@ -13,7 +13,8 @@ type AssessmentAction =
   | { type: 'UPDATE_ASSESSMENT_DATA'; payload: Partial<AssessmentData> }
   | { type: 'UPDATE_QUESTION_DATA'; payload: { questionId: string; data: any } }
   | { type: 'SET_MODAL_OPEN'; payload: boolean }
-  | { type: 'LOAD_SAVED_DATA'; payload: AssessmentData };
+  | { type: 'LOAD_SAVED_DATA'; payload: AssessmentData }
+  | { type: 'RESET_ASSESSMENT' };
 
 const initialState: AssessmentState = {
   currentSection: 0,
@@ -47,6 +48,17 @@ function assessmentReducer(state: AssessmentState, action: AssessmentAction): As
       return { ...state, isModalOpen: action.payload };
     case 'LOAD_SAVED_DATA':
       return { ...state, assessmentData: action.payload };
+    case 'RESET_ASSESSMENT':
+      return {
+        ...state,
+        currentSection: 0,
+        assessmentData: {
+          clientName: '',
+          assessmentDate: new Date().toISOString().split('T')[0],
+          assessorName: '',
+          sections: {}
+        }
+      };
     default:
       return state;
   }
@@ -64,6 +76,7 @@ interface AssessmentContextType {
   saveData: () => void;
   loadData: () => void;
   exportAssessment: () => void;
+  resetAssessment: () => void;
 }
 
 const AssessmentContext = createContext<AssessmentContextType | undefined>(undefined);
@@ -302,6 +315,12 @@ export function AssessmentProvider({ children }: { children: React.ReactNode }) 
     URL.revokeObjectURL(url);
   };
 
+  const resetAssessment = () => {
+    dispatch({ type: 'RESET_ASSESSMENT' });
+    // Clear localStorage as well
+    localStorage.removeItem('cybersecurityAssessment');
+  };
+
   const value: AssessmentContextType = {
     state,
     dispatch,
@@ -313,7 +332,8 @@ export function AssessmentProvider({ children }: { children: React.ReactNode }) 
     analyzeNAItems,
     saveData,
     loadData,
-    exportAssessment
+    exportAssessment,
+    resetAssessment
   };
 
   return (

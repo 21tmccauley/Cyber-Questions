@@ -1,9 +1,10 @@
-import React from 'react';
-import { Shield, User, Calendar, FileText } from 'lucide-react';
+import React, { useState } from 'react';
+import { Shield, User, Calendar, FileText, RotateCcw } from 'lucide-react';
 import { useAssessment } from '@/context/AssessmentContext';
 
 const Header: React.FC = () => {
-  const { state, dispatch, calculateSecurityScore } = useAssessment();
+  const { state, dispatch, calculateSecurityScore, resetAssessment } = useAssessment();
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
   const score = calculateSecurityScore();
 
   const getScoreColor = (score: number) => {
@@ -96,8 +97,49 @@ const Header: React.FC = () => {
               <span>{score.riskCounts.low} Low Risk</span>
             </div>
           </div>
+          <button
+            onClick={() => setShowResetConfirm(true)}
+            className="flex items-center space-x-2 px-3 py-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg text-white text-sm font-medium transition-all duration-200"
+          >
+            <RotateCcw className="h-4 w-4" />
+            <span>Reset Assessment</span>
+          </button>
         </div>
       </div>
+      
+      {/* Reset Confirmation Dialog */}
+      {showResetConfirm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-2xl p-6 max-w-md mx-4">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="w-10 h-10 bg-warning-100 rounded-full flex items-center justify-center">
+                <RotateCcw className="h-5 w-5 text-warning-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900">Reset Assessment</h3>
+            </div>
+            <p className="text-gray-600 mb-6">
+              Are you sure you want to reset the entire assessment? This will clear all your progress, answers, and findings. This action cannot be undone.
+            </p>
+            <div className="flex space-x-3">
+              <button
+                onClick={() => setShowResetConfirm(false)}
+                className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  resetAssessment();
+                  setShowResetConfirm(false);
+                }}
+                className="flex-1 px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 transition-colors"
+              >
+                Reset Assessment
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
