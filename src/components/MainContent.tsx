@@ -1,5 +1,4 @@
 import React from 'react';
-import { ChevronLeft, ChevronRight, Save, Download } from 'lucide-react';
 import { useAssessment } from '@/context/AssessmentContext';
 import SectionHeader from './SectionHeader';
 import QuestionsContainer from './QuestionsContainer';

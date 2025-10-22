@@ -1,4 +1,3 @@
-import React from 'react';
 import { AssessmentProvider } from '@/context/AssessmentContext';
 import Header from '@/components/Header';
 import ProgressBar from '@/components/ProgressBar';
